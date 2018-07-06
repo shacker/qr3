@@ -2,6 +2,9 @@
 QR | Redis-Based Data Structures in Python
 """
 
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 __author__ = 'Ted Nyman'
 __version__ = '0.6.0'
 __license__ = 'MIT'
@@ -18,7 +21,7 @@ except ImportError:
 # things that they did right. Natively pickling and unpiclking
 # objects is pretty useful.
 try:
-    import cPickle as pickle
+    import pickle as pickle
 except ImportError:
     import pickle
 
@@ -44,7 +47,7 @@ def getRedis(**kwargs):
     connection pool mechanism to keep the number of open file descriptors
     tractable.
     """
-    key = ':'.join((repr(key) + '=>' + repr(value)) for key, value in kwargs.items())
+    key = ':'.join((repr(key) + '=>' + repr(value)) for key, value in list(kwargs.items()))
     try:
         return redis.Redis(connection_pool=connectionPools[key])
     except KeyError:

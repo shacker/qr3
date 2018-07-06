@@ -1,3 +1,5 @@
+from builtins import zip
+from builtins import range
 import os
 import qr
 import redis
@@ -69,7 +71,7 @@ class Queue(unittest.TestCase):
         self.assertEquals(len(self.q), count)
         self.q.clear()
         
-        self.q.extend(range(count))
+        self.q.extend(list(range(count)))
         self.assertEquals(self.q.elements(), [count - i - 1 for i in range(count)])
         self.q.clear()
             
@@ -85,7 +87,7 @@ class Queue(unittest.TestCase):
     def test_dump_load(self):
         # Get a temporary file to dump a queue to that file
         count = 100
-        self.q.extend(range(count))
+        self.q.extend(list(range(count)))
         self.assertEquals(self.q.elements(), [count - i - 1for i in range(count)])
         with os.tmpfile() as f:
             self.q.dump(f)
@@ -206,7 +208,7 @@ class Stack(unittest.TestCase):
     def test_dump_load(self):
         # Get a temporary file to dump a queue to that file
         count = 100
-        self.stack.extend(range(count))
+        self.stack.extend(list(range(count)))
         self.assertEquals(self.stack.elements(), [count - i - 1 for i in range(count)])
         with os.tmpfile() as f:
             self.stack.dump(f)
@@ -241,7 +243,7 @@ class PriorityQueue(unittest.TestCase):
     def test_get_item(self):
         count = 100
         items = [i for i in range(count)]
-        self.q.extend(zip(items, items))
+        self.q.extend(list(zip(items, items)))
         # Get single values
         for i in range(count):
             self.assertEquals(self.q[i], items[i])
@@ -256,7 +258,7 @@ class PriorityQueue(unittest.TestCase):
         '''Test extending a queue, including with a generator'''
         count = 100
         items = [i for i in range(count)]
-        self.q.extend(zip(items, items))
+        self.q.extend(list(zip(items, items)))
         self.assertEquals(self.q.elements(), items)
         self.q.clear()
 
@@ -264,14 +266,14 @@ class PriorityQueue(unittest.TestCase):
         '''Test whether or not we can get real values with pop'''
         count = 100
         items = [i for i in range(count)]
-        self.q.extend(zip(items, items))
+        self.q.extend(list(zip(items, items)))
         next = self.q.pop()
         while next:
             self.assertTrue(isinstance(next, int))
             next = self.q.pop()
         # Now we'll pop with getting the scores as well
         items = [i for i in range(count)]
-        self.q.extend(zip(items, items))
+        self.q.extend(list(zip(items, items)))
         value, score = self.q.pop(withscores=True)
         while value:
             self.assertTrue(isinstance(value, int))
@@ -300,7 +302,7 @@ class PriorityQueue(unittest.TestCase):
         # Get a temporary file to dump a queue to that file
         count = 100
         items = [i for i in range(count)]
-        self.q.extend(zip(items, items))
+        self.q.extend(list(zip(items, items)))
         self.assertEquals(self.q.elements(), items)
         with os.tmpfile() as f:
             self.q.dump(f)

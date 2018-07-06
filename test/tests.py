@@ -88,7 +88,7 @@ class Queue(unittest.TestCase):
         # Get a temporary file to dump a queue to that file
         count = 100
         self.q.extend(list(range(count)))
-        self.assertEquals(self.q.elements(), [count - i - 1for i in range(count)])
+        self.assertEquals(self.q.elements(), [count - i - 1 for i in range(count)])
         with os.tmpfile() as f:
             self.q.dump(f)
             # Now, assert that it is empty

@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import os
-import unittest
 from setuptools import setup, find_packages
 
 version = '0.6.0'
@@ -39,6 +37,7 @@ setup(
     keywords             = 'Redis, queue, data structures',
     license              = 'MIT',
     packages             = find_packages(),
+    install_requires     = ['future', 'redis'],
     py_modules           = ['qr'],
     include_package_data = True,
     zip_safe             = False,

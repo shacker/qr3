@@ -137,15 +137,15 @@ class BaseQueue(object):
     def dumpfname(self, fname, truncate=False):
         """Destructively dump the contents of the queue into fname"""
         if truncate:
-            with file(fname, 'w+') as f:
+            with open(fname, 'w+') as f:
                 self.dump(f)
         else:
-            with file(fname, 'a+') as f:
+            with open(fname, 'a+') as f:
                 self.dump(f)
     
     def loadfname(self, fname):
         """Load the contents of the contents of fname into the queue"""
-        with file(fname) as f:
+        with open(fname) as f:
             self.load(f)
     
     def extend(self, vals):
@@ -260,15 +260,15 @@ class PriorityQueue(BaseQueue):
     def dumpfname(self, fname, truncate=False):
         """Destructively dump the contents of the queue into fname"""
         if truncate:
-            with file(fname, 'w+') as f:
+            with open(fname, 'w+') as f:
                 self.dump(f)
         else:
-            with file(fname, 'a+') as f:
+            with open(fname, 'a+') as f:
                 self.dump(f)
     
     def loadfname(self, fname):
         """Load the contents of the contents of fname into the queue"""
-        with file(fname) as f:
+        with open(fname) as f:
             self.load(f)
     
     def extend(self, vals):

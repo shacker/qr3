@@ -11,36 +11,36 @@ class Queue(unittest.TestCase):
     def setUp(self):
         r.delete('qrtestqueue')
         self.q = qr.Queue(key='qrtestqueue')
-        self.assertEquals(len(self.q), 0)
+        self.assertEqual(len(self.q), 0)
 
     def test_roundtrip(self):
         q = self.q
         q.push('foo')
-        self.assertEquals(len(q), 1)
-        self.assertEquals(q.pop(), 'foo')
-        self.assertEquals(len(q), 0)
+        self.assertEqual(len(q), 1)
+        self.assertEqual(q.pop(), 'foo')
+        self.assertEqual(len(q), 0)
 
     def test_order(self):
         q = self.q
         q.push('foo')
         q.push('bar')
-        self.assertEquals(q.pop(), 'foo')
-        self.assertEquals(q.pop(), 'bar')
+        self.assertEqual(q.pop(), 'foo')
+        self.assertEqual(q.pop(), 'bar')
 
     def test_order_mixed(self):
         q = self.q
         q.push('foo')
-        self.assertEquals(q.pop(), 'foo')
+        self.assertEqual(q.pop(), 'foo')
         q.push('bar')
-        self.assertEquals(q.pop(), 'bar')
+        self.assertEqual(q.pop(), 'bar')
 
     def test_len(self):
         count = 100
         for i in range(count):
-            self.assertEquals(len(self.q), i)
+            self.assertEqual(len(self.q), i)
             self.q.push(i)
         for i in range(count):
-            self.assertEquals(len(self.q), count - i)
+            self.assertEqual(len(self.q), count - i)
             self.q.pop()
         self.q.clear()
 
@@ -52,27 +52,27 @@ class Queue(unittest.TestCase):
         items.reverse()
         # Get single values
         for i in range(count):
-            self.assertEquals(self.q[i], items[i])
+            self.assertEqual(self.q[i], items[i])
         # Get small ranges
         for i in range(count-1):
-            self.assertEquals(self.q[i:i+1], items[i:i+1])
+            self.assertEqual(self.q[i:i+1], items[i:i+1])
         # Now get the whole range
-        self.assertEquals(self.q[0:-1], items[0:-1])
+        self.assertEqual(self.q[0:-1], items[0:-1])
         self.q.clear()
     
     def test_extend(self):
         '''Test extending a queue, including with a generator'''
         count = 100
         self.q.extend(i for i in range(count))
-        self.assertEquals(len(self.q), count)
+        self.assertEqual(len(self.q), count)
         self.q.clear()
         
         self.q.extend([i for i in range(count)])
-        self.assertEquals(len(self.q), count)
+        self.assertEqual(len(self.q), count)
         self.q.clear()
         
         self.q.extend(list(range(count)))
-        self.assertEquals(self.q.elements(), [count - i - 1 for i in range(count)])
+        self.assertEqual(self.q.elements(), [count - i - 1 for i in range(count)])
         self.q.clear()
             
     def test_pack_unpack(self):
@@ -88,16 +88,16 @@ class Queue(unittest.TestCase):
         # Get a temporary file to dump a queue to that file
         count = 100
         self.q.extend(list(range(count)))
-        self.assertEquals(self.q.elements(), [count - i - 1 for i in range(count)])
+        self.assertEqual(self.q.elements(), [count - i - 1 for i in range(count)])
         with tempfile.TemporaryFile() as f:
             self.q.dump(f)
             # Now, assert that it is empty
-            self.assertEquals(len(self.q), 0)
+            self.assertEqual(len(self.q), 0)
             # Now, try to load it back in
             f.seek(0)
             self.q.load(f)
-            self.assertEquals(len(self.q), count)
-            self.assertEquals(self.q.elements(), [count - i - 1 for i in range(count)])
+            self.assertEqual(len(self.q), count)
+            self.assertEqual(self.q.elements(), [count - i - 1 for i in range(count)])
             # Now clean up after myself
             f.truncate()
             self.q.clear()
@@ -106,48 +106,48 @@ class CappedCollection(unittest.TestCase):
     def setUp(self):
         r.delete('qrtestcc')
         self.aq = qr.CappedCollection(key='qrtestcc', size=3)
-        self.assertEquals(len(self.aq), 0)
+        self.assertEqual(len(self.aq), 0)
 
     def test_roundtrip(self):
         aq = self.aq
         aq.push('foo')
-        self.assertEquals(len(aq), 1)
-        self.assertEquals(aq.pop(), 'foo')
-        self.assertEquals(len(aq), 0)
+        self.assertEqual(len(aq), 1)
+        self.assertEqual(aq.pop(), 'foo')
+        self.assertEqual(len(aq), 0)
 
     def test_order(self):
         aq = self.aq
         aq.push('foo')
         aq.push('bar')
-        self.assertEquals(aq.pop(), 'foo')
-        self.assertEquals(aq.pop(), 'bar')
+        self.assertEqual(aq.pop(), 'foo')
+        self.assertEqual(aq.pop(), 'bar')
 
     def test_order_mixed(self):
         aq = self.aq
         aq.push('foo')
-        self.assertEquals(aq.pop(), 'foo')
+        self.assertEqual(aq.pop(), 'foo')
         aq.push('bar')
-        self.assertEquals(aq.pop(), 'bar')
+        self.assertEqual(aq.pop(), 'bar')
 
     def test_limit(self):
         aq = self.aq
         aq.push('a')
         aq.push('b')
         aq.push('c')
-        self.assertEquals(len(aq), 3)
+        self.assertEqual(len(aq), 3)
         aq.push('d')
         aq.push('e')
-        self.assertEquals(len(aq), 3)
-        self.assertEquals(aq.pop(), 'c')
-        self.assertEquals(aq.pop(), 'd')
-        self.assertEquals(aq.pop(), 'e')
-        self.assertEquals(len(aq), 0)
+        self.assertEqual(len(aq), 3)
+        self.assertEqual(aq.pop(), 'c')
+        self.assertEqual(aq.pop(), 'd')
+        self.assertEqual(aq.pop(), 'e')
+        self.assertEqual(len(aq), 0)
 
     def test_extend(self):
         '''Test extending a queue, including with a generator'''
         count = 100
         self.aq.extend(i for i in range(count))
-        self.assertEquals(len(self.aq), self.aq.size)
+        self.assertEqual(len(self.aq), self.aq.size)
         self.aq.clear()
 
 class Stack(unittest.TestCase):
@@ -158,23 +158,23 @@ class Stack(unittest.TestCase):
     def test_roundtrip(self):
         stack = self.stack
         stack.push('foo')
-        self.assertEquals(len(stack), 1)
-        self.assertEquals(stack.pop(), 'foo')
-        self.assertEquals(len(stack), 0)
+        self.assertEqual(len(stack), 1)
+        self.assertEqual(stack.pop(), 'foo')
+        self.assertEqual(len(stack), 0)
 
     def test_order(self):
         stack = self.stack
         stack.push('foo')
         stack.push('bar')
-        self.assertEquals(stack.pop(), 'bar')
-        self.assertEquals(stack.pop(), 'foo')
+        self.assertEqual(stack.pop(), 'bar')
+        self.assertEqual(stack.pop(), 'foo')
 
     def test_order_mixed(self):
         stack = self.stack
         stack.push('foo')
-        self.assertEquals(stack.pop(), 'foo')
+        self.assertEqual(stack.pop(), 'foo')
         stack.push('bar')
-        self.assertEquals(stack.pop(), 'bar')
+        self.assertEqual(stack.pop(), 'bar')
 
     def test_get_item(self):
         count = 100
@@ -183,19 +183,19 @@ class Stack(unittest.TestCase):
         items.reverse()
         # Get single values
         for i in range(count):
-            self.assertEquals(self.stack[i], items[i])
+            self.assertEqual(self.stack[i], items[i])
         # Get small ranges
         for i in range(count-1):
-            self.assertEquals(self.stack[i:i+2], items[i:i+2])
+            self.assertEqual(self.stack[i:i+2], items[i:i+2])
         # Now get the whole range
-        self.assertEquals(self.stack[0:-1], items[0:-1])
+        self.assertEqual(self.stack[0:-1], items[0:-1])
         self.stack.clear()
 
     def test_extend(self):
         '''Test extending a queue, including with a generator'''
         count = 100
         self.stack.extend(i for i in range(count))
-        self.assertEquals(self.stack.elements(), [count - i - 1 for i in range(count)])
+        self.assertEqual(self.stack.elements(), [count - i - 1 for i in range(count)])
         
         # Also, make sure it's still a stack. It should be in reverse order
         last = self.stack.pop()
@@ -211,16 +211,16 @@ class Stack(unittest.TestCase):
         # Get a temporary file to dump a queue to that file
         count = 100
         self.stack.extend(list(range(count)))
-        self.assertEquals(self.stack.elements(), [count - i - 1 for i in range(count)])
+        self.assertEqual(self.stack.elements(), [count - i - 1 for i in range(count)])
         with tempfile.TemporaryFile() as f:
             self.stack.dump(f)
             # Now, assert that it is empty
-            self.assertEquals(len(self.stack), 0)
+            self.assertEqual(len(self.stack), 0)
             # Now, try to load it back in
             f.seek(0)
             self.stack.load(f)
-            self.assertEquals(len(self.stack), count)
-            self.assertEquals(self.stack.elements(), [count - i - 1 for i in range(count)])
+            self.assertEqual(len(self.stack), count)
+            self.assertEqual(self.stack.elements(), [count - i - 1 for i in range(count)])
             # Now clean up after myself
             f.truncate()
             self.stack.clear()
@@ -232,15 +232,15 @@ class PriorityQueue(unittest.TestCase):
 
     def test_roundtrip(self):
         self.q.push('foo', 1)
-        self.assertEquals(len(self.q), 1)
-        self.assertEquals(self.q.pop(), 'foo')
-        self.assertEquals(len(self.q), 0)
+        self.assertEqual(len(self.q), 1)
+        self.assertEqual(self.q.pop(), 'foo')
+        self.assertEqual(len(self.q), 0)
 
     def test_order(self):
         self.q.push('foo', 1)
         self.q.push('bar', 0)
-        self.assertEquals(self.q.pop(), 'bar')
-        self.assertEquals(self.q.pop(), 'foo')
+        self.assertEqual(self.q.pop(), 'bar')
+        self.assertEqual(self.q.pop(), 'foo')
 
     def test_get_item(self):
         count = 100
@@ -248,12 +248,12 @@ class PriorityQueue(unittest.TestCase):
         self.q.extend(list(zip(items, items)))
         # Get single values
         for i in range(count):
-            self.assertEquals(self.q[i], items[i])
+            self.assertEqual(self.q[i], items[i])
         # Get small ranges
         for i in range(count-1):
-            self.assertEquals(self.q[i:i+2], items[i:i+2])
+            self.assertEqual(self.q[i:i+2], items[i:i+2])
         # Now get the whole range
-        self.assertEquals(self.q[0:-1], items[0:-1])
+        self.assertEqual(self.q[0:-1], items[0:-1])
         self.q.clear()
 
     def test_extend(self):
@@ -261,7 +261,7 @@ class PriorityQueue(unittest.TestCase):
         count = 100
         items = [i for i in range(count)]
         self.q.extend(list(zip(items, items)))
-        self.assertEquals(self.q.elements(), items)
+        self.assertEqual(self.q.elements(), items)
         self.q.clear()
 
     def test_pop(self):
@@ -297,7 +297,7 @@ class PriorityQueue(unittest.TestCase):
         # Push the same value on with different scores
         for i in range(count):
             self.q.push(1, i)
-        self.assertEquals(len(self.q), 1)
+        self.assertEqual(len(self.q), 1)
         self.q.clear()
     
     def test_dump_load(self):
@@ -305,16 +305,16 @@ class PriorityQueue(unittest.TestCase):
         count = 100
         items = [i for i in range(count)]
         self.q.extend(list(zip(items, items)))
-        self.assertEquals(self.q.elements(), items)
+        self.assertEqual(self.q.elements(), items)
         with tempfile.TemporaryFile() as f:
             self.q.dump(f)
             # Now, assert that it is empty
-            self.assertEquals(len(self.q), 0)
+            self.assertEqual(len(self.q), 0)
             # Now, try to load it back in
             f.seek(0)
             self.q.load(f)
-            self.assertEquals(len(self.q), count)
-            self.assertEquals(self.q.elements(), items)
+            self.assertEqual(len(self.q), count)
+            self.assertEqual(self.q.elements(), items)
             # Now clean up after myself
             f.truncate()
             self.q.clear()

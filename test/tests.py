@@ -1,8 +1,8 @@
 from builtins import zip
 from builtins import range
-import os
 import qr
 import redis
+import tempfile
 import unittest
 
 r = redis.Redis()
@@ -89,7 +89,7 @@ class Queue(unittest.TestCase):
         count = 100
         self.q.extend(list(range(count)))
         self.assertEquals(self.q.elements(), [count - i - 1 for i in range(count)])
-        with os.tmpfile() as f:
+        with tempfile.TemporaryFile() as f:
             self.q.dump(f)
             # Now, assert that it is empty
             self.assertEquals(len(self.q), 0)
@@ -199,9 +199,11 @@ class Stack(unittest.TestCase):
         
         # Also, make sure it's still a stack. It should be in reverse order
         last = self.stack.pop()
-        while last != None:
+        now = None
+        while last is not None:
             now = self.stack.pop()
-            self.assertTrue(last > now)
+            if now is not None:
+                self.assertTrue(last > now)
             last = now
         self.stack.clear()
 
@@ -210,7 +212,7 @@ class Stack(unittest.TestCase):
         count = 100
         self.stack.extend(list(range(count)))
         self.assertEquals(self.stack.elements(), [count - i - 1 for i in range(count)])
-        with os.tmpfile() as f:
+        with tempfile.TemporaryFile() as f:
             self.stack.dump(f)
             # Now, assert that it is empty
             self.assertEquals(len(self.stack), 0)
@@ -304,7 +306,7 @@ class PriorityQueue(unittest.TestCase):
         items = [i for i in range(count)]
         self.q.extend(list(zip(items, items)))
         self.assertEquals(self.q.elements(), items)
-        with os.tmpfile() as f:
+        with tempfile.TemporaryFile() as f:
             self.q.dump(f)
             # Now, assert that it is empty
             self.assertEquals(len(self.q), 0)

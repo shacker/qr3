@@ -1,11 +1,12 @@
 from builtins import zip
 from builtins import range
-import qr
+from qr3 import qr
 import redis
 import tempfile
 import unittest
 
 r = redis.Redis()
+
 
 class Queue(unittest.TestCase):
     def setUp(self):
@@ -59,22 +60,22 @@ class Queue(unittest.TestCase):
         # Now get the whole range
         self.assertEqual(self.q[0:-1], items[0:-1])
         self.q.clear()
-    
+
     def test_extend(self):
         '''Test extending a queue, including with a generator'''
         count = 100
         self.q.extend(i for i in range(count))
         self.assertEqual(len(self.q), count)
         self.q.clear()
-        
+
         self.q.extend([i for i in range(count)])
         self.assertEqual(len(self.q), count)
         self.q.clear()
-        
+
         self.q.extend(list(range(count)))
         self.assertEqual(self.q.elements(), [count - i - 1 for i in range(count)])
         self.q.clear()
-            
+
     def test_pack_unpack(self):
         '''Make sure that it behaves like python-object-in, python-object-out'''
         count = 100
@@ -83,7 +84,7 @@ class Queue(unittest.TestCase):
         while next:
             self.assertTrue(isinstance(next, dict))
             next = self.q.pop()
-    
+
     def test_dump_load(self):
         # Get a temporary file to dump a queue to that file
         count = 100
@@ -101,7 +102,7 @@ class Queue(unittest.TestCase):
             # Now clean up after myself
             f.truncate()
             self.q.clear()
-    
+
 class CappedCollection(unittest.TestCase):
     def setUp(self):
         r.delete('qrtestcc')
@@ -196,7 +197,7 @@ class Stack(unittest.TestCase):
         count = 100
         self.stack.extend(i for i in range(count))
         self.assertEqual(self.stack.elements(), [count - i - 1 for i in range(count)])
-        
+
         # Also, make sure it's still a stack. It should be in reverse order
         last = self.stack.pop()
         now = None
@@ -281,7 +282,7 @@ class PriorityQueue(unittest.TestCase):
             self.assertTrue(isinstance(value, int))
             self.assertTrue(isinstance(score, float))
             value, score = self.q.pop(withscores=True)
-        
+
     def test_push(self):
         '''Test whether we can push well'''
         count = 100
@@ -291,7 +292,7 @@ class PriorityQueue(unittest.TestCase):
         while value:
             self.assertEqual(value + score, count)
             value, score = self.q.pop(withscores=True)
-        
+
     def test_uniqueness(self):
         count = 100
         # Push the same value on with different scores
@@ -299,7 +300,7 @@ class PriorityQueue(unittest.TestCase):
             self.q.push(1, i)
         self.assertEqual(len(self.q), 1)
         self.q.clear()
-    
+
     def test_dump_load(self):
         # Get a temporary file to dump a queue to that file
         count = 100
@@ -318,6 +319,7 @@ class PriorityQueue(unittest.TestCase):
             # Now clean up after myself
             f.truncate()
             self.q.clear()
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -6,11 +6,13 @@ from future import standard_library
 standard_library.install_aliases()
 from builtins import object
 __author__ = 'Ted Nyman'
-__version__ = '0.6.0'
+__version__ = '1.0.0'
 __license__ = 'MIT'
 
-import redis
 import logging
+import pickle
+import redis
+
 
 try:
     import json
@@ -20,10 +22,7 @@ except ImportError:
 # This is a complete nod to hotqueue -- this is one of the
 # things that they did right. Natively pickling and unpiclking
 # objects is pretty useful.
-try:
-    import pickle as pickle
-except ImportError:
-    import pickle
+
 
 class NullHandler(logging.Handler):
     """A logging handler that discards all logging records"""
@@ -38,6 +37,7 @@ log.addHandler(NullHandler())
 # when connecting. This is so we don't have an unwieldy number of
 # connections
 connectionPools = {}
+
 
 def getRedis(**kwargs):
     """
@@ -54,6 +54,7 @@ def getRedis(**kwargs):
         cp = redis.ConnectionPool(**kwargs)
         connectionPools[key] = cp
         return redis.Redis(connection_pool=cp)
+
 
 class worker(object):
     def __init__(self, q, err=None, *args, **kwargs):
@@ -81,7 +82,8 @@ class worker(object):
                     except:
                         pass
         return wrapped
-        
+
+
 class BaseQueue(object):
     """Base functionality common to queues"""
     @staticmethod
@@ -93,7 +95,7 @@ class BaseQueue(object):
         self.serializer = pickle
         self.redis = getRedis(**kwargs)
         self.key = key
-    
+
     def __len__(self):
         """Return the length of the queue"""
         return self.redis.llen(self.key)
@@ -201,6 +203,7 @@ class Deque(BaseQueue):
         log.debug('Popped ** %s ** from key ** %s **' % (popped, self.key))
         return self._unpack(popped)
 
+
 class Queue(BaseQueue): 
     """Implements a FIFO queue"""
 
@@ -221,7 +224,8 @@ class Queue(BaseQueue):
             queue, popped = self.redis.brpop(self.key)
         log.debug('Popped ** %s ** from key ** %s **' % (popped, self.key))
         return self._unpack(popped)
-    
+
+
 class PriorityQueue(BaseQueue):
     """A priority queue"""
     def __len__(self):
@@ -315,6 +319,7 @@ class PriorityQueue(BaseQueue):
         '''Add an element with a given score'''
         return self.redis.zadd(self.key, self._pack(value), score)
 
+
 class CappedCollection(BaseQueue):
     """
     Implements a capped collection (the collection never
@@ -351,6 +356,7 @@ class CappedCollection(BaseQueue):
             queue, popped = self.redis.brpop(self.key)
         log.debug('Popped ** %s ** from key ** %s **' % (popped, self.key))
         return self._unpack(popped)
+
 
 class Stack(BaseQueue):
     """Implements a LIFO stack""" 

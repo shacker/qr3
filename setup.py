@@ -24,6 +24,15 @@ for Redis, [redis-py](http://github.com/andymccurdy/redis-py "redis-py").
 
 Run setup.py to install qr3 or 'pip install qr3'.
 
+Given that this package primarily supports internal use cases, we cannot guarantee a 
+specific response time on PRs for new features. However, we will do our best to 
+consider them in a timely fashion.
+
+We do commit to reviewing anything related to a security issue in a timely manner. 
+We ask that you first submit anything of that nature to security@doctorondemand.com 
+prior to creating a PR and follow responsible disclosure rules.
+
+Thanks for your interest in helping with this package!
 '''
 
 setup(

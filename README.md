@@ -1,7 +1,7 @@
-QR
+QR3
 =====
 
-**QR** helps you create and work with **queue, capped collection (bounded queue), deque, and stack** data structures for **Redis**. 
+**QR3** helps you create and work with **queue, capped collection (bounded queue), deque, and stack** data structures for **Redis**.
 Redis is well-suited for implementations of these abstract data structures, and QR makes it even easier to work with the structures in Python.
 
 Quick Setup
@@ -24,6 +24,23 @@ Then install `qr`:
 ```
 python setup.py install
 ```
+
+To run tests:
+```
+python -m unittest discover -v
+```
+
+Responding to PR's
+------------------
+Given that this package primarily supports internal use cases, we cannot guarantee a
+specific response time on PRs for new features. However, we will do our best to
+consider them in a timely fashion.
+
+We do commit to reviewing anything related to a security issue in a timely manner.
+We ask that you first submit anything of that nature to security@doctorondemand.com
+prior to creating a PR and follow responsible disclosure rules.
+
+Thanks for your interest in helping with this package!
 
 Basics of QR
 ------------------

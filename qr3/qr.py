@@ -1,4 +1,5 @@
 """
+
 QR | Redis-Based Data Structures in Python
 """
 
@@ -10,6 +11,7 @@ __version__ = '1.0.0'
 __license__ = 'MIT'
 
 import logging
+from packaging import version
 import pickle
 import redis
 
@@ -94,6 +96,8 @@ class BaseQueue(object):
     def __init__(self, key, **kwargs):
         self.serializer = pickle
         self.redis = getRedis(**kwargs)
+        # redis-py version 3 handles the 'zadd' functionality differently than it did for v2.
+        self.redis_version_3_or_greater = version.parse(redis.__version__) >= version.parse("3.0")
         self.key = key
 
     def __len__(self):
@@ -279,7 +283,10 @@ class PriorityQueue(BaseQueue):
         """Extends the elements in the queue."""
         with self.redis.pipeline(transaction=False) as pipe:
             for val, score in vals:
-                pipe.zadd(self.key, self._pack(val), score)
+                if self.redis_version_3_or_greater:
+                    pipe.zadd(self.key, {self._pack(val): score})
+                else:
+                    pipe.zadd(self.key, self._pack(val), score)
             return pipe.execute()
 
     def peek(self, withscores=False):
@@ -317,7 +324,10 @@ class PriorityQueue(BaseQueue):
     
     def push(self, value, score):
         '''Add an element with a given score'''
-        return self.redis.zadd(self.key, self._pack(value), score)
+        if self.redis_version_3_or_greater:
+            return self.redis.zadd(self.key, {self._pack(value): score})
+        else:
+            return self.redis.zadd(self.key, self._pack(value), score)
 
 
 class CappedCollection(BaseQueue):

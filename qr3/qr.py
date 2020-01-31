@@ -1,4 +1,5 @@
 """
+
 QR | Redis-Based Data Structures in Python
 """
 
@@ -279,7 +280,7 @@ class PriorityQueue(BaseQueue):
         """Extends the elements in the queue."""
         with self.redis.pipeline(transaction=False) as pipe:
             for val, score in vals:
-                pipe.zadd(self.key, self._pack(val), score)
+                pipe.zadd(self.key, {self._pack(val): score})
             return pipe.execute()
 
     def peek(self, withscores=False):
@@ -317,7 +318,7 @@ class PriorityQueue(BaseQueue):
     
     def push(self, value, score):
         '''Add an element with a given score'''
-        return self.redis.zadd(self.key, self._pack(value), score)
+        return self.redis.zadd(self.key, {self._pack(value): score})
 
 
 class CappedCollection(BaseQueue):

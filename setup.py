@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-version = '1.0.0'
+version = '1.0.1'
 
 LONG_DESCRIPTION = '''
 
@@ -50,7 +50,7 @@ setup(
     keywords             = 'Redis, queue, data structures',
     license              = 'MIT',
     packages             = find_packages(),
-    install_requires     = ['future', 'redis'],
+    install_requires     = ['future', 'redis>=3.0.0'],
     py_modules           = ['qr'],
     include_package_data = True,
     zip_safe             = False,

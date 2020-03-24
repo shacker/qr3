@@ -19,7 +19,13 @@ redis-py is available via `setuptools` or `pip`:
 sudo pip install redis
 ```
 
-Then install `qr`: 
+Then install `qr`:
+
+```
+pip install qr3
+```
+
+Or if working from a local checkout of this package:
 
 ```
 python setup.py install
@@ -45,7 +51,7 @@ Thanks for your interest in helping with this package!
 Basics of QR
 ------------------
 
-QR queues store serialized Python objects (using [cPickle](http://docs.python.org/library/pickle.html) by default), but that can be changed by 
+QR queues store serialized Python objects (using [cPickle](http://docs.python.org/library/pickle.html) by default), but that can be changed by
 setting the serializer on a per-queue basis.  This means "Python object in, and Python object out." There are a few constraints
 on what can be pickled, and thus put into queues:
 
@@ -72,7 +78,7 @@ A **capped collection**:
 
 A **deque**, or double-ended queue:
 
-* You can push values to the front *or* back of a deque, and pop elements from the front *or* back of the deque. 
+* You can push values to the front *or* back of a deque, and pop elements from the front *or* back of the deque.
 
 A **stack**, or, as they say in German, a 'Stapelspeicher':
 
@@ -84,12 +90,14 @@ A **priority queue**
 * Push elements into a priority queue with *scores*, and then retrieve the elements in order of their respective scores.
 * Values stored in the priority queue are unique.
 
-Using QR 
+Using QR
 -------------------------------------
 
 QR contains a few small classes to represent each data structure. To get access to one of the data structures, you create an instance. You can pass custom options for the underlying Redis instance as keyword arguments. For example:
 
 ```python
+from qr3.qr import Queue
+
 Queue('brand_new_queue_name', host='localhost', port=9000)
 ```
 
@@ -98,12 +106,12 @@ Queue('brand_new_queue_name', host='localhost', port=9000)
 A Queue
 --------
 
-Let's create a Beatles queue, circa 1962. 
+Let's create a Beatles queue, circa 1962.
 
 	>> from qr import Queue
 	>> bqueue = Queue('Beatles')
 
-You are now the owner of a `Queue` object (`bqueue`), associated with the underlying Redis key 'Beatles'. 
+You are now the owner of a `Queue` object (`bqueue`), associated with the underlying Redis key 'Beatles'.
 
 	>> bqueue.push('Pete')
 	>> bqueue.push('John')
@@ -119,9 +127,9 @@ Ringo joins:
 
 	>> bqueue.push('Ringo')
 
-We can return the elements from the queue. Each class in QR includes two return-style methods: **elements** and **elements_as_json**. 
+We can return the elements from the queue. Each class in QR includes two return-style methods: **elements** and **elements_as_json**.
 
-* Call **elements()**, and you'll get back a Python list. 
+* Call **elements()**, and you'll get back a Python list.
 
 * Call **elements_as_json()**, and you'll get back the list as a JSON object.
 
@@ -216,7 +224,7 @@ appear once in the queue, with the second score provided:
 	>> pr.peek(withscores=True)
 	('The Beatles', 11000000.0)
 
-In addition to the values themselves, the `pop` and `peek` commands also support the argument 
+In addition to the values themselves, the `pop` and `peek` commands also support the argument
 `withscores`, which returns a tuple of the value and its score when set to `True`.
 
 All Queue Types
